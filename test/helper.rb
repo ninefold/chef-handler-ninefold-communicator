@@ -1,3 +1,3 @@
 require "minitest/autorun"
 
-require "portal_communicator"
+require "ninefold_communicator"

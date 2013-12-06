@@ -1,6 +1,6 @@
 require "helper"
 
-describe PortalCommunicator do
+describe NinefoldCommunicator do
   before do
     Chef::Log.stubs(:error)
   end
@@ -9,7 +9,7 @@ describe PortalCommunicator do
 
   it "raises error when endpoint is not specified" do
     assert_raises ArgumentError do
-      PortalCommunicator.new.client_post
+      NinefoldCommunicator.new.client_post
     end
   end
 
