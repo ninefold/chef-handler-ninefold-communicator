@@ -1,4 +1,4 @@
-# Chef Handler for communicating run status to configured endpoint
+# Chef Handler for communicating run statsu via emitted log entries
 #
 # Author:: Warren Bain <ninefolddev@ninefold.com>
 # Copyright:: Copyright 2012 Opscode, Inc.
@@ -6,66 +6,37 @@
 #
 
 require "chef/handler"
-require "httparty"
 
-class NinefoldCommunicator < Chef::Handler
-  VERSION = "0.1.0"
+class Chef
+  class Handler
+    class Ninefold
+      class Communicator < ::Chef::Handler
 
-  attr_accessor :options, :ignore, :endpoint
+        attr_accessor :options, :ignore, :tag
 
-  def initialize(options={})
-    @ignore   = options.delete(:ignore) || []
-    @endpoint = options.delete(:endpoint) || nil
-    @options  = options
-  end
+        def initialize(options={})
+          @tag      = options.delete(:tag)
+          @ignore   = options.delete(:ignore) || []
+          @options  = options
+          Chef::Log.debug "#{self.class.to_s} initialized"
+        end
 
-  def report
-    if run_status.failed? && !ignore_exception(run_status.exception)
-      Chef::Log.error "Reporting exception via Ninefold Communicator"
-    else
-      Chef::Log.info "Reporting success via Ninefold Communicator"
+        def report
+          if run_status.failed? && !ignore_exception(run_status.exception)
+            Chef::Log.error "#{tag} Reporting exception via Ninefold Communicator"
+          else
+            Chef::Log.info "#{tag} Reporting success via Ninefold Communicator"
+          end
+        end
+
+        protected
+
+        def ignore_exception?(exception)
+          ignore.any? do |ignore_case|
+            ignore_case[:class] == exception.class.name && (!ignore_case.key?(:message) || !!ignore_case[:message].match(exception.message))
+          end
+        end
+      end
     end
-
-    client_post(server_params)
   end
-
-  def ignore_exception?(exception)
-    ignore.any? do |ignore_case|
-      ignore_case[:class] == exception.class.name && (!ignore_case.key?(:message) || !!ignore_case[:message].match(exception.message))
-    end
-  end
-
-  def server_params
-    {
-      :body => {
-        :notifier_name        => "Chef Ninefold Communicator",
-        :notifier_version     => VERSION,
-        :source               => node.name,
-        :params               => {
-          :start_time           => run_status.start_time,
-          :end_time             => run_status.end_time,
-          :elapsed_time         => run_status.elapsed_time,
-          :updatedresources     => run_status.updated_resources.count,
-          :run_list             => run_status.node.run_list.to_s,
-          :exception            => run_status.exception,
-          :backtrace            => run_status.backtrace
-        }
-      }
-    }.merge(options)
-  end
-
-  def client_post(params)
-    HTTParty.post(
-      api_server,
-      :query => params,
-      :headers => { 'Content-Type' => 'application/json' }
-    )
-  end
-
-  def api_server
-    raise ArgumentError.new("You must specify an endpoint url!") unless endpoint
-    endpoint
-  end
-
 end
-

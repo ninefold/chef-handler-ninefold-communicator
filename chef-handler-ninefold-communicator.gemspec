@@ -1,11 +1,11 @@
 Gem::Specification.new do |s|
   s.name          = 'chef-handler-ninefold-communicator'
-  s.version       = '0.1.0'
+  s.version       = '0.2.0'
   s.platform      = Gem::Platform::RUBY
   s.author        = "Warren Bain"
   s.email         = "ninefolddev@ninefold.com"
-  s.summary       = %q(Chef report handler for communicating run status to a configured endpoint)
-  s.description   = %q(Chef report handler for communicating run status to a configured endpoint)
+  s.summary       = %q(Chef report handler for communicating run status in a structured way)
+  s.description   = %q(Chef report handler for communicating run status to a structured way)
   s.homepage      = "https://github.com/ninefold/chef-handler-ninefold-communicator"
 
   s.require_paths = %w(lib)
