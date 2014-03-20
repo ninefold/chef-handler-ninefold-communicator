@@ -29,22 +29,42 @@ module Ninefold
 
       def report
         if run_failed?
-          Chef::Log.fatal "#{tag} Your chef run on #{node.name} failed!"
+          Chef::Log.fatal status_copy("failed!")
           unless ignore_exception?(run_exception)
-            # we report the formatted exception with a checkpoint so that
-            # Portal can extract it and report to customer via UI / CLI
-            msg = tag
-            msg << " We detected that your chef run on #{node.name} failed for the following reason:\n"
-            msg << " #{formatted_exception}\n"
-            msg << " Please contact Ninefold Support if you require further assistance\n"
-            Chef::Log.fatal msg
+            Chef::Log.fatal exception_copy
           end
         else
-          Chef::Log.info "#{tag} Your chef run on #{node.name} succeeded!"
+          Chef::Log.info status_copy("succeeded!")
         end
       end
 
       protected
+
+      def status_copy(type)
+        prettify("Your app deployment on #{node.name} #{type}")
+      end
+
+      def exception_copy
+        prettify(
+          "We detected that your app deployment on #{node.name} failed for the following reason:",
+          "---> #{formatted_exception} <---",
+          "Please contact Ninefold Support if you require assistance."
+        )
+      end
+
+      def prettify(*lines)
+        repeat = 25
+        msg = tag
+        msg << border(repeat) << "\n"
+        lines.each do |line|
+          msg << "  #{line}\n"
+        end
+        msg << border(repeat)
+      end
+
+      def border(num)
+        '-' * num.to_i
+      end
 
       def run_failed?
         run_status.failed?
