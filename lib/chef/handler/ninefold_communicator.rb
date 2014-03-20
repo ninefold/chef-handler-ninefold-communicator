@@ -6,19 +6,21 @@
 #
 
 require 'rubygems'
+Gem.clear_paths
+require 'chef'
 require 'chef/log'
 require 'chef/handler'
 
-module Ninefold
+class Ninefold
   class Communicator < ::Chef::Handler
 
     attr_accessor :options, :ignore, :tag
 
-    def initialize(p)
-      puts p
-      Chef::Log.debug "#{self.class.to_s} initialized with options #{p.to_s}"
+    def initialize(params)
+      puts params
+      Chef::Log.debug "#{self.class.to_s} initialized with options #{params.to_s}"
       # we do this so that we can pass node attributes which are immutable!
-      options = p.dup || {}
+      options = params.dup || {}
       @tag      = options.delete(:tag)
       @ignore   = options.delete(:ignore) || []
       @options  = options
