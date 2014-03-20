@@ -32,12 +32,12 @@ module Ninefold
           # we report the formatted exception with a checkpoint so that
           # Portal can extract it and report to customer via UI / CLI
           msg = tag
-          msg << " We detected that chef run #{run_id} failed for the following reason:\n"
+          msg << " We detected that your chef run on #{node.name} failed for the following reason:\n"
           msg << " #{formatted_exception}\n"
           msg << " Please contact Ninefold Support if you require further assistance\n"
           Chef::Log.fatal msg
         else
-          Chef::Log.info "#{tag} chef #{run_id} succeeded!"
+          Chef::Log.info "#{tag} Your chef run on #{node.name} succeeded!"
         end
         Chef::Log.debug run_information
       end
@@ -46,10 +46,6 @@ module Ninefold
 
       def run_failed?
         run_status.failed?
-      end
-
-      def run_id
-        run_status.run_id
       end
 
       def run_exception
