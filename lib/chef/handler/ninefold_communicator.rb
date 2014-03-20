@@ -52,8 +52,8 @@ module Ninefold
       end
 
       def prettify(*lines)
-        repeat = 25
-        msg = tag
+        repeat = 100
+        msg = tag << "\n"
         msg << border(repeat) << "\n"
         lines.each do |line|
           msg << "  #{line}\n"
