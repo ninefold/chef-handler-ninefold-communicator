@@ -18,7 +18,6 @@ module Ninefold
       attr_accessor :options, :ignore, :tag
 
       def initialize(params)
-        puts params
         Chef::Log.debug "#{self.class.to_s} initialized with options #{params.to_s}"
         # we do this so that we can pass node attributes which are immutable!
         options = params.dup || {}
@@ -70,16 +69,16 @@ module Ninefold
         run_status.failed?
       end
 
+      def run_information
+        run_status.to_hash
+      end
+
       def run_exception
         run_status.exception
       end
 
       def formatted_exception
         run_status.formatted_exception
-      end
-
-      def run_information
-        run_status.to_hash
       end
 
       def ignore_exception?(exception)
