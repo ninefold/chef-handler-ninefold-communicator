@@ -27,13 +27,14 @@ module Ninefold
       end
 
       def report
-        if run_failed?
-          Chef::Log.fatal status_copy("failed!")
-          unless ignore_exception?(run_exception)
+        unless run_failed?
+          Chef::Log.info status_copy("succeeded!")
+        else
+          if ignore_exception?(run_exception)
+            Chef::Log.fatal status_copy("failed!")
+          else
             Chef::Log.fatal exception_copy
           end
-        else
-          Chef::Log.info status_copy("succeeded!")
         end
       end
 
@@ -45,7 +46,7 @@ module Ninefold
 
       def exception_copy
         prettify(
-          "We detected that your app deployment on #{node.name} failed for the following reason:",
+          "Your app deployment on #{node.name} failed for the following reason:",
           "---> #{formatted_exception} <---",
           "Please contact Ninefold Support if you require assistance."
         )
