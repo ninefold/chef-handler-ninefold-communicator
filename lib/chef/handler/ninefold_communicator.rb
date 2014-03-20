@@ -28,18 +28,20 @@ module Ninefold
       end
 
       def report
-        if run_failed? && !ignore_exception(run_exception)
-          # we report the formatted exception with a checkpoint so that
-          # Portal can extract it and report to customer via UI / CLI
-          msg = tag
-          msg << " We detected that your chef run on #{node.name} failed for the following reason:\n"
-          msg << " #{formatted_exception}\n"
-          msg << " Please contact Ninefold Support if you require further assistance\n"
-          Chef::Log.fatal msg
+        if run_failed?
+          Chef::Log.fatal "#{tag} Your chef run on #{node.name} failed!"
+          unless ignore_exception?(run_exception)
+            # we report the formatted exception with a checkpoint so that
+            # Portal can extract it and report to customer via UI / CLI
+            msg = tag
+            msg << " We detected that your chef run on #{node.name} failed for the following reason:\n"
+            msg << " #{formatted_exception}\n"
+            msg << " Please contact Ninefold Support if you require further assistance\n"
+            Chef::Log.fatal msg
+          end
         else
           Chef::Log.info "#{tag} Your chef run on #{node.name} succeeded!"
         end
-        Chef::Log.debug run_information
       end
 
       protected
