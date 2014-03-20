@@ -14,11 +14,14 @@ class Chef
 
         attr_accessor :options, :ignore, :tag
 
-        def initialize(options={})
+        def initialize(p)
+          puts p
+          Chef::Log.debug "#{self.class.to_s} initialized with options #{p.to_s}"
+          # we do this so that we can pass node attributes which are immutable!
+          options = p.dup || {}
           @tag      = options.delete(:tag)
           @ignore   = options.delete(:ignore) || []
           @options  = options
-          Chef::Log.debug "#{self.class.to_s} initialized"
         end
 
         def report

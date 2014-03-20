@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'chef-handler-ninefold-communicator'
-  s.version       = '0.2.0'
+  s.version       = '0.2.1'
   s.platform      = Gem::Platform::RUBY
   s.author        = "Warren Bain"
   s.email         = "ninefolddev@ninefold.com"
