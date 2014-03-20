@@ -47,13 +47,13 @@ module Ninefold
       def exception_copy
         prettify(
           "Your app deployment on #{node.name} failed for the following reason:",
-          "---> #{formatted_exception} <---",
-          "Please contact Ninefold Support if you require assistance."
+          "\n===> #{formatted_exception} <===\n",
+          "Please contact Ninefold Support if you require further assistance."
         )
       end
 
       def prettify(*lines)
-        repeat = 100
+        repeat = 120
         msg = tag << "\n"
         msg << border(repeat) << "\n"
         lines.each do |line|
