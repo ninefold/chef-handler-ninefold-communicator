@@ -47,7 +47,7 @@ module Ninefold
       def exception_copy
         prettify(
           "Your app deployment on #{node.name} failed for the following reason:",
-          "\n===> #{formatted_exception} <===\n",
+          "  ==> #{formatted_exception} <==",
           "Please contact Ninefold Support if you require further assistance."
         )
       end
