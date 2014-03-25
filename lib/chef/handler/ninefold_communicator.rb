@@ -15,7 +15,7 @@ module Ninefold
   module Handler
     class Communicator < ::Chef::Handler
 
-      attr_accessor :options, :ignore, :tag
+      attr_accessor :options, :ignore, :tag, :marker
 
       def initialize(params)
         Chef::Log.debug "#{self.class.to_s} initialized with options #{params.to_s}"
@@ -23,6 +23,7 @@ module Ninefold
         options = params.dup || {}
         @tag      = options.delete(:tag)
         @ignore   = options.delete(:ignore) || []
+        @marker   = options.delete(:marker)
         @options  = options
       end
 
@@ -35,6 +36,7 @@ module Ninefold
           else
             Chef::Log.fatal exception_copy
           end
+          Chef::Log.fatal marker_copy if marker
         end
       end
 
@@ -50,6 +52,10 @@ module Ninefold
           "  ==> #{formatted_exception} <==",
           "Please contact Ninefold Support if you require further assistance."
         )
+      end
+
+      def marker_copy
+        "#{marker}>> #{run_exception} <<#{marker}"
       end
 
       def prettify(*lines)

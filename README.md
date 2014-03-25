@@ -23,6 +23,7 @@ where arguments are:
 
 * tag    - will be prepended to log messages for interception by consumers
 * ignore - array of exceptions that should not get detailed reporting
+* marker - special marker in log for nagios to pull out exceptions
 
 # Author
 
