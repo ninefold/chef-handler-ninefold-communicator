@@ -1,4 +1,4 @@
-## 0.3.1 (Mar 25, 2014)
+## 0.4.0 (Mar 25, 2014)
 
 * Add a 'marker' for exceptions to report via nagios scripts
 

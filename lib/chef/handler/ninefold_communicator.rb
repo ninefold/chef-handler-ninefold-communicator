@@ -55,7 +55,7 @@ module Ninefold
       end
 
       def marker_copy
-        "START_#{marker} #{run_exception} #{marker}_END"
+        "#{marker}_START #{run_exception} #{marker}_END"
       end
 
       def prettify(*lines)
