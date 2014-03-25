@@ -1,3 +1,7 @@
+## 0.5.0 (Mar 25, 2014)
+
+* Emit formatted\_exception for marker
+
 ## 0.4.0 (Mar 25, 2014)
 
 * Add a 'marker' for exceptions to report via nagios scripts
