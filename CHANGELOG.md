@@ -1,3 +1,8 @@
+## 0.7.0 (Apr 2, 2014)
+
+* Remove timestamps from log snippet so that logstash doesn't
+  split our lines up in the deployment log
+
 ## 0.6.0 (Apr 1, 2014)
 
 * Improve formatting, add debugging and highlight optional
