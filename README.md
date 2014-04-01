@@ -21,9 +21,10 @@ The recipe registers the handler and passes in attributes in
 
 where arguments are:
 
-* tag    - will be prepended to log messages for interception by consumers
-* ignore - array of exceptions that should not get detailed reporting
-* marker - special marker in log for nagios to pull out exceptions
+* tag       - will be prepended to log messages for interception by consumers
+* ignore    - array of exceptions that should not get detailed reporting
+* marker    - special marker in log for nagios to pull out exceptions
+* highlight - decorate output for better readibility
 
 # Author
 
