@@ -72,6 +72,7 @@ module Ninefold
           msg << "#{line}\n"
         end
         msg << border(repeat) if highlight
+        msg
       end
 
       def debug(message)
