@@ -94,7 +94,12 @@ module Ninefold
       end
 
       def formatted_exception
-        run_status.formatted_exception
+        # we remove any timestamps so that logstash doesn't break our lines up...
+        exception = run_status.formatted_exception
+        if exception
+          exception.gsub!(/\[[ :0-9T\/\-\+]+\]\s/,'')
+        end
+        exception
       end
 
       def ignore_exception?(exception)
