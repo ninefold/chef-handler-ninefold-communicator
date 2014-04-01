@@ -18,7 +18,7 @@ module Ninefold
       attr_accessor :options, :ignore, :tag, :marker, :highlight
 
       def initialize(params)
-        Chef::Log.debug "#{self.class.to_s} initialized with options #{params.to_s}"
+        debug "initialized with options #{params.to_s}"
         # we do this so that we can pass node attributes which are immutable!
         options    = params.dup || {}
         @tag       = options.delete(:tag)
@@ -30,13 +30,17 @@ module Ninefold
 
       def report
         unless run_failed?
+          debug "run succeeded"
           Chef::Log.info status_copy("succeeded!")
         else
+          debug "run failed"
           if ignore_exception?(run_exception)
             Chef::Log.fatal status_copy("failed!")
           else
+            debug "formatting exception: #{run_exception}"
             Chef::Log.fatal exception_copy
           end
+          debug "outputting marker? #{marker}"
           Chef::Log.fatal marker_copy if marker
         end
       end
@@ -60,6 +64,7 @@ module Ninefold
       end
 
       def prettify(*lines)
+        debug "outputting #{lines}"
         repeat = 100
         msg = "#{tag} "
         msg << border(repeat) << "\n" if highlight
@@ -67,6 +72,10 @@ module Ninefold
           msg << "#{line}\n"
         end
         msg << border(repeat) if highlight
+      end
+
+      def debug(message)
+        Chef::Log.debug "#{self.class.to_s} #{message}"
       end
 
       def border(num)
