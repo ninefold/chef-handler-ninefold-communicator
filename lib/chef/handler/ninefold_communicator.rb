@@ -61,8 +61,8 @@ module Ninefold
 
       def prettify(*lines)
         repeat = 100
-        msg = tag << " "
-        msg << "\n" << border(repeat) << "\n" if highlight
+        msg = "#{tag} "
+        msg << border(repeat) << "\n" if highlight
         lines.each do |line|
           msg << "#{line}\n"
         end
