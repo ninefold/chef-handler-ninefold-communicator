@@ -15,27 +15,32 @@ module Ninefold
   module Handler
     class Communicator < ::Chef::Handler
 
-      attr_accessor :options, :ignore, :tag, :marker
+      attr_accessor :options, :ignore, :tag, :marker, :highlight
 
       def initialize(params)
-        Chef::Log.debug "#{self.class.to_s} initialized with options #{params.to_s}"
+        debug "initialized with options #{params.to_s}"
         # we do this so that we can pass node attributes which are immutable!
-        options = params.dup || {}
-        @tag      = options.delete(:tag)
-        @ignore   = options.delete(:ignore) || []
-        @marker   = options.delete(:marker)
-        @options  = options
+        options    = params.dup || {}
+        @tag       = options.delete(:tag)
+        @ignore    = options.delete(:ignore) || []
+        @marker    = options.delete(:marker)
+        @highlight = options.delete(:highlight)
+        @options   = options
       end
 
       def report
         unless run_failed?
+          debug "run succeeded"
           Chef::Log.info status_copy("succeeded!")
         else
+          debug "run failed"
           if ignore_exception?(run_exception)
             Chef::Log.fatal status_copy("failed!")
           else
+            debug "formatting exception: #{run_exception}"
             Chef::Log.fatal exception_copy
           end
+          debug "outputting marker? #{marker}"
           Chef::Log.fatal marker_copy if marker
         end
       end
@@ -49,7 +54,7 @@ module Ninefold
       def exception_copy
         prettify(
           "Your app deployment on #{node.name} failed for the following reason:",
-          "  ==> #{formatted_exception} <==",
+          "  ==>  #{formatted_exception}  <==",
           "Please contact Ninefold Support if you require further assistance."
         )
       end
@@ -59,13 +64,17 @@ module Ninefold
       end
 
       def prettify(*lines)
-        repeat = 120
-        msg = tag << "\n"
-        msg << border(repeat) << "\n"
-        lines.each do |line|
-          msg << "  #{line}\n"
-        end
-        msg << border(repeat)
+        debug "outputting #{lines}"
+        repeat = 100
+        msg = "#{tag} "
+        msg << border(repeat) << "\n" if highlight
+        msg << lines.join("\n")
+        msg << "\n" << border(repeat) if highlight
+        msg
+      end
+
+      def debug(message)
+        Chef::Log.debug "#{self.class.to_s} #{message}"
       end
 
       def border(num)

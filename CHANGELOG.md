@@ -1,3 +1,7 @@
+## 0.6.0 (Apr 1, 2014)
+
+* Improve formatting, add debugging and highlight optional
+
 ## 0.5.0 (Mar 25, 2014)
 
 * Emit formatted\_exception for marker
