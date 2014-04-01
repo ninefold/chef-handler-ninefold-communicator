@@ -15,16 +15,17 @@ module Ninefold
   module Handler
     class Communicator < ::Chef::Handler
 
-      attr_accessor :options, :ignore, :tag, :marker
+      attr_accessor :options, :ignore, :tag, :marker, :highlight
 
       def initialize(params)
         Chef::Log.debug "#{self.class.to_s} initialized with options #{params.to_s}"
         # we do this so that we can pass node attributes which are immutable!
-        options = params.dup || {}
-        @tag      = options.delete(:tag)
-        @ignore   = options.delete(:ignore) || []
-        @marker   = options.delete(:marker)
-        @options  = options
+        options    = params.dup || {}
+        @tag       = options.delete(:tag)
+        @ignore    = options.delete(:ignore) || []
+        @marker    = options.delete(:marker)
+        @highlight = options.delete(:highlight)
+        @options   = options
       end
 
       def report
@@ -49,7 +50,7 @@ module Ninefold
       def exception_copy
         prettify(
           "Your app deployment on #{node.name} failed for the following reason:",
-          "  ==> #{formatted_exception} <==",
+          "  ==>  #{formatted_exception}  <==",
           "Please contact Ninefold Support if you require further assistance."
         )
       end
@@ -59,13 +60,13 @@ module Ninefold
       end
 
       def prettify(*lines)
-        repeat = 120
-        msg = tag << "\n"
-        msg << border(repeat) << "\n"
+        repeat = 100
+        msg = tag << " "
+        msg << "\n" << border(repeat) << "\n" if highlight
         lines.each do |line|
-          msg << "  #{line}\n"
+          msg << "#{line}\n"
         end
-        msg << border(repeat)
+        msg << border(repeat) if highlight
       end
 
       def border(num)
