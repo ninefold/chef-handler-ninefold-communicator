@@ -68,10 +68,8 @@ module Ninefold
         repeat = 100
         msg = "#{tag} "
         msg << border(repeat) << "\n" if highlight
-        lines.each do |line|
-          msg << "#{line}\n"
-        end
-        msg << border(repeat) if highlight
+        msg << lines.join("\n")
+        msg << "\n" << border(repeat) if highlight
         msg
       end
 
