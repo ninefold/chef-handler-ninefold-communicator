@@ -85,6 +85,10 @@ module Ninefold
         '-' * num.to_i
       end
 
+      def node
+        @node ||= run_context.node
+      end
+
       def run_failed?
         run_status.failed?
       end
