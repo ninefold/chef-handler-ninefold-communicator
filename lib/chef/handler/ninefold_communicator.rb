@@ -15,7 +15,7 @@ module Ninefold
   module Handler
     class Communicator < ::Chef::Handler
 
-      attr_accessor :options, :ignore, :tag, :marker, :highlight
+      attr_accessor :options, :ignore, :tag, :marker, :highlight, :state
 
       def initialize(params)
         debug "initialized with options #{params.to_s}"
@@ -25,8 +25,9 @@ module Ninefold
         @ignore    = options.delete(:ignore) || []
         @marker    = options.delete(:marker)
         @highlight = options.delete(:highlight)
+        @state     = options.delete(:state)
         @options   = options
-        set_run_started
+        # NOTE: we can't do set_run_started here since node is not available
       end
 
       def report
@@ -112,19 +113,19 @@ module Ninefold
       end
 
       def set_run_started
-        set_tags(running_tag)
+        set_tags(started_tag)
         node.save
       end
 
       def set_run_succeeded
-        set_tags(success_tag)
-        unset_tags(failed_tag, running_tag)
+        set_tags(succeeded_tag)
+        unset_tags(failed_tag, started_tag)
         node.save
       end
 
       def set_run_failed
         set_tags(failed_tag)
-        unset_tags(success_tag, running_tag)
+        unset_tags(succeeded_tag, started_tag)
         node.save
       end
 
@@ -136,16 +137,16 @@ module Ninefold
         node.tags -= tags
       end
 
-      def success_tag
-        'SUCCESS'
+      def succeeded_tag
+        state[:success]
       end
 
       def failed_tag
-        'ERROR'
+        state[:failure]
       end
 
-      def running_tag
-        'RUNNING'
+      def started_tag
+        state[:running]
       end
 
     end
