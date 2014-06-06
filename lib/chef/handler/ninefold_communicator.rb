@@ -26,10 +26,7 @@ module Ninefold
         @marker    = options.delete(:marker)
         @highlight = options.delete(:highlight)
         @state     = options.delete(:state)
-        # we pass in the node since Chef doesn't provide access to the run_status here
-        @node      = options[:node]
-        set_run_started
-        @node = nil
+        # NOTE: we would run set_run_started but node is not available so recipe does it
       end
 
       def report
