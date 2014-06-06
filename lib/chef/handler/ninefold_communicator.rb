@@ -133,11 +133,11 @@ module Ninefold
       end
 
       def set_tags(*tags)
-        node.tags |= tags
+        node.set['tags'] |= tags
       end
 
       def unset_tags(*tags)
-        node.tags -= tags
+        node.set['tags'] -= tags
       end
 
       def succeeded_tag
