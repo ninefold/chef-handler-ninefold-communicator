@@ -113,17 +113,20 @@ module Ninefold
       end
 
       def set_run_started
+        debug "setting state to run started"
         set_tags(started_tag)
         node.save
       end
 
       def set_run_succeeded
+        debug "setting state to run succeeded"
         set_tags(succeeded_tag)
         unset_tags(failed_tag, started_tag)
         node.save
       end
 
       def set_run_failed
+        debug "setting state to run failed"
         set_tags(failed_tag)
         unset_tags(succeeded_tag, started_tag)
         node.save
