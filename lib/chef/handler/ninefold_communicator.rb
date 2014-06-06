@@ -86,7 +86,7 @@ module Ninefold
       end
 
       def node
-        @node ||= run_context.node
+        @node ||= run_status.node
       end
 
       def run_failed?
