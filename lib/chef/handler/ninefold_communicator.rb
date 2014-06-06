@@ -32,11 +32,11 @@ module Ninefold
 
       def report
         unless run_failed?
-          debug "run succeeded"
+          debug "run succeeded on #{node.name}"
           Chef::Log.info status_copy("succeeded!")
           set_run_succeeded
         else
-          debug "run failed"
+          debug "run failed on #{node.name}"
           set_run_failed
           if ignore_exception?(run_exception)
             Chef::Log.fatal status_copy("failed!")
