@@ -1,4 +1,4 @@
-# Chef Handler for communicating run statsu via emitted log entries
+# Chef Handler for communicating run status via emitted log entries
 #
 # Author:: Warren Bain <ninefolddev@ninefold.com>
 # Copyright:: Copyright 2012 Opscode, Inc.
@@ -26,14 +26,17 @@ module Ninefold
         @marker    = options.delete(:marker)
         @highlight = options.delete(:highlight)
         @options   = options
+        set_run_started
       end
 
       def report
         unless run_failed?
           debug "run succeeded"
           Chef::Log.info status_copy("succeeded!")
+          set_run_succeeded
         else
           debug "run failed"
+          set_run_failed
           if ignore_exception?(run_exception)
             Chef::Log.fatal status_copy("failed!")
           else
@@ -107,6 +110,44 @@ module Ninefold
           ignore_case[:class] == exception.class.name && (!ignore_case.key?(:message) || !!ignore_case[:message].match(exception.message))
         end
       end
+
+      def set_run_started
+        set_tags(running_tag)
+        node.save
+      end
+
+      def set_run_succeeded
+        set_tags(success_tag)
+        unset_tags(failed_tag, running_tag)
+        node.save
+      end
+
+      def set_run_failed
+        set_tags(failed_tag)
+        unset_tags(success_tag, running_tag)
+        node.save
+      end
+
+      def set_tags(*tags)
+        node.tags |= tags
+      end
+
+      def unset_tags(*tags)
+        node.tags -= tags
+      end
+
+      def success_tag
+        'SUCCESS'
+      end
+
+      def failed_tag
+        'ERROR'
+      end
+
+      def running_tag
+        'RUNNING'
+      end
+
     end
   end
 end

@@ -1,3 +1,11 @@
+
+## 0.8.0 (Jun 6, 2014)
+
+* Add tags to record overall state of the node
+  - Running when handler has been initialised
+  - Error when a run has failed
+  - Success when a run has succeeded
+
 ## 0.7.0 (Apr 2, 2014)
 
 * Remove timestamps from log snippet so that logstash doesn't
