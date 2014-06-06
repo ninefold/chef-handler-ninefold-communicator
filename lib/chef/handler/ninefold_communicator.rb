@@ -27,16 +27,16 @@ module Ninefold
         @highlight = options.delete(:highlight)
         @state     = options.delete(:state)
         @options   = options
-        # NOTE: we can't do set_run_started here since node is not available
+        set_run_started
       end
 
       def report
         unless run_failed?
-          debug "run succeeded on #{node.name}"
+          debug "run succeeded"
           Chef::Log.info status_copy("succeeded!")
           set_run_succeeded
         else
-          debug "run failed on #{node.name}"
+          debug "run failed"
           set_run_failed
           if ignore_exception?(run_exception)
             Chef::Log.fatal status_copy("failed!")
@@ -119,6 +119,7 @@ module Ninefold
       def set_run_started
         debug "setting state to run started"
         set_tags(started_tag)
+        unset_tags(succeeded_tag, failed_tag)
         node.save
       end
 
@@ -137,15 +138,11 @@ module Ninefold
       end
 
       def set_tags(*tags)
-        debug "accessing tags = #{node[:tags]}"
-        node_tags = node['tags'].dup
-        node.set['tags'] = node_tags | tags
+        node.set['tags'] |= tags
       end
 
       def unset_tags(*tags)
-        debug "accessing tags = #{node[:tags]}"
-        node_tags = node['tags'].dup
-        node.set['tags'] = node_tags - tags
+        node.set['tags'] -= tags
       end
 
       def succeeded_tag
