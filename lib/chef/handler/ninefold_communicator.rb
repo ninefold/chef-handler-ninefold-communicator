@@ -10,7 +10,6 @@ Gem.clear_paths
 require 'chef'
 require 'chef/log'
 require 'chef/handler'
-require 'chef/node'
 
 module Ninefold
   module Handler
@@ -27,7 +26,8 @@ module Ninefold
         @marker    = options.delete(:marker)
         @highlight = options.delete(:highlight)
         @state     = options.delete(:state)
-        @node      = Chef::Node.load options[:node_name]
+        # we pass in the node since Chef doesn't provide access to the run_status here
+        @node      = options[:node]
         set_run_started
         @node = nil
       end
