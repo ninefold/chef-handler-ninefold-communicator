@@ -133,11 +133,15 @@ module Ninefold
       end
 
       def set_tags(*tags)
-        node.set['tags'] = node['tags'] | tags
+        debug "accessing node['tags'] = #{node['tags']}"
+        node_tags = node['tags'].dup
+        node.set['tags'] = node_tags | tags
       end
 
       def unset_tags(*tags)
-        node.set['tags'] = node['tags'] - tags
+        debug "accessing node['tags'] = #{node['tags']}"
+        node_tags = node['tags'].dup
+        node.set['tags'] = node_tags - tags
       end
 
       def succeeded_tag
