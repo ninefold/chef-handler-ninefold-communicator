@@ -1,10 +1,10 @@
 
-## 0.8.0 (Jun 6, 2014)
+## 0.8.9 (Jun 10, 2014)
 
 * Add tags to record overall state of the node
-  - Running when handler has been initialised
-  - Error when a run has failed
-  - Success when a run has succeeded
+  - Running : chef-client is running (actually handled externally)
+  - Error   : last run failed
+  - Success : last run succeeded
 
 ## 0.7.0 (Apr 2, 2014)
 

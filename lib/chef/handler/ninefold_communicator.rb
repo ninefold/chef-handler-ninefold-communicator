@@ -1,8 +1,8 @@
 # Chef Handler for communicating run status via emitted log entries
 #
-# Author:: Warren Bain <ninefolddev@ninefold.com>
-# Copyright:: Copyright 2012 Opscode, Inc.
-# License:: Apache2
+# Author::    Warren Bain <ninefolddev@ninefold.com>
+# Copyright:: Copyright Ninefold Pty Limited.
+# License::   Reserverd
 #
 
 require 'rubygems'
@@ -15,7 +15,7 @@ module Ninefold
   module Handler
     class Communicator < ::Chef::Handler
 
-      attr_accessor :options, :ignore, :tag, :marker, :highlight
+      attr_accessor :options, :ignore, :tag, :marker, :highlight, :state
 
       def initialize(params)
         debug "initialized with options #{params.to_s}"
@@ -25,19 +25,22 @@ module Ninefold
         @ignore    = options.delete(:ignore) || []
         @marker    = options.delete(:marker)
         @highlight = options.delete(:highlight)
-        @options   = options
-        set_run_started
+        @state     = options.delete(:state) || {}
+        # NOTE: next method is logical but not possible as node object is not available
+        # -> set_run_started
+        # instead, this is enabled in the cookbook that initialises us
       end
 
       def report
         unless run_failed?
           debug "run succeeded"
-          Chef::Log.info status_copy("succeeded!")
           set_run_succeeded
+          Chef::Log.info status_copy("succeeded!")
         else
           debug "run failed"
           set_run_failed
           if ignore_exception?(run_exception)
+            debug "ignoring exception: #{run_exception}"
             Chef::Log.fatal status_copy("failed!")
           else
             debug "formatting exception: #{run_exception}"
@@ -112,40 +115,50 @@ module Ninefold
       end
 
       def set_run_started
-        set_tags(running_tag)
+        # NOTE: here for completeness but not possible to run
+        # this on initialisation as node object is not available then
+        debug "setting state to 'run started'"
+        set_tags(started_tag)
+        unset_tags(succeeded_tag, failed_tag)
         node.save
       end
 
       def set_run_succeeded
-        set_tags(success_tag)
-        unset_tags(failed_tag, running_tag)
+        debug "setting state to 'run succeeded'"
+        set_tags(succeeded_tag)
+        unset_tags(failed_tag, started_tag)
         node.save
       end
 
       def set_run_failed
+        debug "setting state to 'run failed'"
         set_tags(failed_tag)
-        unset_tags(success_tag, running_tag)
+        unset_tags(succeeded_tag, started_tag)
         node.save
       end
 
       def set_tags(*tags)
-        node.tags |= tags
+        node.set[:tags] |= tags
       end
 
       def unset_tags(*tags)
-        node.tags -= tags
+        node.set[:tags] -= tags
       end
 
-      def success_tag
-        'SUCCESS'
+      def succeeded_tag
+        state[:success] || "Success"
       end
 
       def failed_tag
-        'ERROR'
+        state[:failure] || "Failue"
       end
 
-      def running_tag
-        'RUNNING'
+      def started_tag
+        state[:running] || "Running"
+      end
+
+      def node
+        @node ||= run_status.node
       end
 
     end
