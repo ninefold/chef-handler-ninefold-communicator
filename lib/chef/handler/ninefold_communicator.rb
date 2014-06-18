@@ -18,7 +18,7 @@ module Ninefold
       attr_accessor :options, :ignore, :tag, :marker, :highlight, :state
 
       def initialize(params)
-        debug "initialized with options #{params.to_s}"
+        log :debug, "initialized with options #{params.to_s}"
         # we do this so that we can pass node attributes which are immutable!
         options    = params.dup || {}
         @tag       = options.delete(:tag)
@@ -33,21 +33,17 @@ module Ninefold
 
       def report
         unless run_failed?
-          debug "run succeeded"
+          log(:debug, "run succeeded")
           set_run_succeeded
-          Chef::Log.info status_copy("succeeded!")
         else
-          debug "run failed"
+          log(:debug, "run failed")
           set_run_failed
           if ignore_exception?(run_exception)
-            debug "ignoring exception: #{run_exception}"
-            Chef::Log.fatal status_copy("failed!")
+            log(:debug, "ignoring exception: #{run_exception}")
           else
-            debug "formatting exception: #{run_exception}"
-            Chef::Log.fatal exception_copy
+            log(:fatal, exception_copy)
           end
-          debug "outputting marker? #{marker}"
-          Chef::Log.fatal marker_copy if marker
+          log(:fatal, marker_copy) if marker
         end
       end
 
@@ -70,7 +66,7 @@ module Ninefold
       end
 
       def prettify(*lines)
-        debug "outputting #{lines}"
+        log(:debug, "outputting #{lines}")
         repeat = 100
         msg = "#{tag} "
         msg << border(repeat) << "\n" if highlight
@@ -79,8 +75,14 @@ module Ninefold
         msg
       end
 
-      def debug(message)
-        Chef::Log.debug "#{self.class.to_s} #{message}"
+      def log(message, level)
+        Chef::Log.send log_level(level), "#{self.class.to_s} #{message}"
+      end
+
+      def log_level(level)
+        level = level.to_s.to_sym unless level.is_a? Symbol
+        level = :info unless [ :info, :debug, :warn, :error, :fatal ].includes?(level)
+        level
       end
 
       def border(num)
@@ -117,21 +119,21 @@ module Ninefold
       def set_run_started
         # NOTE: here for completeness but not possible to run
         # this on initialisation as node object is not available then
-        debug "setting state to 'run started'"
+        log(:debug, "setting state to 'run started'")
         set_tags(started_tag)
         unset_tags(succeeded_tag, failed_tag)
         node.save
       end
 
       def set_run_succeeded
-        debug "setting state to 'run succeeded'"
+        log(:debug, "setting state to 'run succeeded'")
         set_tags(succeeded_tag)
         unset_tags(failed_tag, started_tag)
         node.save
       end
 
       def set_run_failed
-        debug "setting state to 'run failed'"
+        log(:debug, "setting state to 'run failed'")
         set_tags(failed_tag)
         unset_tags(succeeded_tag, started_tag)
         node.save
