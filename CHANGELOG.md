@@ -1,5 +1,5 @@
 
-## 0.9.0 (Jun 18, 2014)
+## 0.9.2 (Jun 18, 2014)
 
 * Stop reporting successful runs - Chef already does that!
 
