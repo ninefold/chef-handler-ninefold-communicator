@@ -1,4 +1,8 @@
 
+## 0.9.2 (Jun 18, 2014)
+
+* Stop reporting successful runs - Chef already does that!
+
 ## 0.8.9 (Jun 10, 2014)
 
 * Add tags to record overall state of the node
