@@ -75,7 +75,7 @@ module Ninefold
         msg
       end
 
-      def log(message, level)
+      def log(level, message)
         Chef::Log.send log_level(level), "#{self.class.to_s} #{message}"
       end
 
