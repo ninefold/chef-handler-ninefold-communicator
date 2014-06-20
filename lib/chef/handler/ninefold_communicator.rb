@@ -81,7 +81,7 @@ module Ninefold
 
       def log_level(level)
         level = level.to_s.to_sym unless level.is_a? Symbol
-        level = :info unless [ :info, :debug, :warn, :error, :fatal ].includes?(level)
+        level = :info unless [ :info, :debug, :warn, :error, :fatal ].include?(level)
         level
       end
 
